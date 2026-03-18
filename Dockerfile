@@ -1,8 +1,10 @@
-FROM composer:2 AS builder
+FROM php:8.4-cli-alpine AS builder
 WORKDIR /app
+RUN apk add --no-cache curl bash openssl
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer create-project --no-interaction laravel/laravel .
 
-FROM php:8.1-fpm-alpine
+FROM php:8.4-fpm-alpine
 WORKDIR /var/www/html
 COPY --from=builder /app /var/www/html
 RUN apk add --no-cache bash shadow
